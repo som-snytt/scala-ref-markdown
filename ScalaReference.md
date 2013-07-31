@@ -96,6 +96,7 @@ classes (Unicode general category given in parentheses):
    \\u0020-\\u007F which are in none of the sets above, mathematical symbols(Sm) 
    and other symbols(So).
 
+\pagebreak[1]
 
 Identifiers
 -----------
@@ -245,25 +246,24 @@ Multiple newline tokens are accepted in the following places (note
 that a semicolon in place of the newline would be illegal in every one
 of these cases):
 
-- between the condition of an 
-  conditional expression ([here](#conditional-expressions)) 
-  or while loop ([here](#while-loop-expressions)) and the next
+- between the condition of a 
+  [conditional expression](#conditional-expressions)
+  or [while loop](#while-loop-expressions) and the next
   following expression,
 - between the enumerators of a 
-  for-comprehension ([here](#for-comprehensions-and-for-loops))
+  [for-comprehension](#for-comprehensions-and-for-loops)
   and the next following expression, and
-- after the initial `type`{.scala} keyword in a type definition or
-  declaration ([here](#type-declarations-and-type-aliases)).
+- after the initial `type`{.scala} keyword in a 
+  [type definition or declaration](#type-declarations-and-type-aliases).
 
 A single new line token is accepted
 
 - in front of an opening brace ‘{’, if that brace is a legal
   continuation of the current statement or expression,
-- after an infix operator, if the first token on the next line can
-  start an expression ([here](#prefix-infix-and-postfix-operations)),
-- in front of a parameter clause 
-  ([here](#function-declarations-and-definitions)), and
-- after an annotation ([here](#user-defined-annotations)).
+- after an [infix operator](#prefix-infix-and-postfix-operations), 
+  if the first token on the next line can start an expression,
+- in front of a [parameter clause](#function-declarations-and-definitions), and
+- after an [annotation](#user-defined-annotations).
 
 (@) The following code contains four well-formed statements, each
     on two lines. The newline tokens between the two lines are not
@@ -383,7 +383,8 @@ Literal  ::=  [‘-’] integerLiteral
 ### Integer Literals
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ {.grammar}
-integerLiteral  ::=  (decimalNumeral | hexNumeral | octalNumeral) [‘L’ | ‘l’]
+integerLiteral  ::=  (decimalNumeral | hexNumeral | octalNumeral) 
+                       [‘L’ | ‘l’]
 decimalNumeral  ::=  ‘0’ | nonZeroDigit {digit}
 hexNumeral      ::=  ‘0’ ‘x’ hexDigit {hexDigit}
 octalNumeral    ::=  ‘0’ octalDigit {octalDigit}
@@ -777,9 +778,10 @@ Types
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ {.grammar}
   Type              ::=  FunctionArgTypes ‘=>’ Type
                       |  InfixType [ExistentialClause]
-  FunctionArgTypes  ::= InfixType
-                      | ‘(’ [ ParamType {‘,’ ParamType } ] ‘)’
-  ExistentialClause ::=  ‘forSome’ ‘{’ ExistentialDcl {semi ExistentialDcl} ‘}’
+  FunctionArgTypes  ::=  InfixType
+                      |  ‘(’ [ ParamType {‘,’ ParamType } ] ‘)’
+  ExistentialClause ::=  ‘forSome’ ‘{’ ExistentialDcl 
+                             {semi ExistentialDcl} ‘}’
   ExistentialDcl    ::=  ‘type’ TypeDcl 
                       |  ‘val’ ValDcl
   InfixType         ::=  CompoundType {id [nl] CompoundType}
@@ -945,7 +947,7 @@ parameters $a_1 , \ldots , a_n$.
 Say the type parameters have lower bounds $L_1 , \ldots , L_n$ and
 upper bounds $U_1 ,  \ldots , U_n$.  The parameterized type is
 well-formed if each actual type parameter
-_conforms to its bounds_, i.e. $σ L_i <: T_i <: σ U_i$ where $σ$ is the
+_conforms to its bounds_, i.e. $\sigma L_i <: T_i <: \sigma U_i$ where $\sigma$ is the
 substitution $[ a_1 := T_1 , \ldots , a_n := T_n ]$.
 
 (@param-types) Given the partial type definitions:
@@ -1005,10 +1007,10 @@ implement other traits).
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ {.scala}
 case class Tuple$n$[+T1, … , +$T_n$](_1: T1, … , _n: $T_n$) 
-extends Product_n[T1, … , $T_n$] {}
+extends Product_n[T1, … , $T_n$]
 
 trait Product_n[+T1, … , +$T_n$] {
-  override def arity = $n$
+  override def productArity = $n$
   def _1: T1
   …
   def _n: $T_n$
@@ -1862,7 +1864,7 @@ value definition `val $p$ = $e$` is expanded as follows:
 1. If the pattern $p$ has bound variables $x_1 , \ldots , x_n$, where $n > 1$:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ {.scala}
-val $\$ x$ = $e$ match {case $p$ => {$x_1 , \ldots , x_n$}}
+val $\$ x$ = $e$ match {case $p$ => ($x_1 , \ldots , x_n$)}
 val $x_1$ = $\$ x$._1
 $\ldots$
 val $x_n$ = $\$ x$._n  .
@@ -1896,7 +1898,7 @@ $e$ match { case $p$ => ()}
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ {.scala}
     val x = f() match { case Some(x) => x }
 
-    val x$\$$ = mylist match { case x :: xs => {x, xs} }
+    val x$\$$ = mylist match { case x :: xs => (x, xs) }
     val x = x$\$$._1 
     val xs = x$\$$._2 
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1963,7 +1965,7 @@ type $T$ as follows:
 `0.0f`      if $T$ is `Float`
 `0.0d`      if $T$ is `Double`
 `false`     if $T$ is `Boolean`
-`{}`        if $T$ is `Unit`
+`()`        if $T$ is `Unit`
 `null`      for all other types $T$
 ----------  --------------------------------------------------
 
@@ -2223,7 +2225,7 @@ changes at the following constructs.
 <!-- TODO: handle type aliases --> 
 
 References to the type parameters in 
-[object-private values, variables, or methods](#modifiers) of the class are not 
+[object-private or object-protected values, variables, or methods](#modifiers) of the class are not 
 checked for their variance position. In these members the type parameter may 
 appear anywhere without restricting its legal variance annotations.
 
@@ -2487,10 +2489,10 @@ FunDef   ::=  FunSig [nl] ‘{’ Block ‘}’
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Special syntax exists for procedures, i.e.\ functions that return the
-\verb@Unit@ value \verb@{}@. 
+`Unit` value `()`. 
 A procedure declaration is a function declaration where the result type
 is omitted. The result type is then implicitly completed to the
-\verb@Unit@ type. E.g., `def $f$($\mathit{ps}$)` is equivalent to
+`Unit` type. E.g., `def $f$($\mathit{ps}$)` is equivalent to
 `def $f$($\mathit{ps}$): Unit`.
 
 A procedure definition is a function definition where the result type
@@ -3160,7 +3162,7 @@ the validity and meaning of a modifier are as follows.
   from templates inside $C$.
 
   An different form of qualification is `private[this]`. A member
-  $M$ marked with this modifier can be accessed only from within
+  $M$ marked with this modifier is called {\em object-protected}; it can be accessed only from within
   the object in which it is defined. That is, a selection $p.M$ is only
   legal if the prefix is `this` or `$O$.this`, for some
   class $O$ enclosing the reference. In addition, the restrictions for
@@ -3759,7 +3761,7 @@ lazy val $m$ = new $sc$ with $mt_1$ with $\ldots$ with $mt_n$ { this: $m.type$ =
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Note that the value defined by an object definition is instantiated
-lazily.  The `new $m\Dollar$cls` constructor is evaluated
+lazily.  The `new $m$\$cls` constructor is evaluated
 not at the point of the object definition, but is instead evaluated
 the first time $m$ is dereferenced during execution of the program
 (which might be never at all). An attempt to dereference $m$ again in
@@ -6943,8 +6945,8 @@ passed to the `main` method as a parameter of type
 `Array[String]`.
 
 The `main` method of a program can be directly defined in the
-object, or it can be inherited. The scala library defines a class
-`scala.Application` that defines an empty inherited `main` method.
+object, or it can be inherited. The scala library defines a special class
+`scala.App` whose body acts as a `main` method.
 An objects $m$ inheriting from this class is thus a program, 
 which executes the initializaton code of the object $m$.
 
@@ -6953,12 +6955,13 @@ which executes the initializaton code of the object $m$.
 
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ {.scala}
     package test
-    object HelloWord {
-      def main(args: Array[String]) { println("hello world") }
+    object HelloWorld {
+      def main(args: Array[String]) { println("Hello World") }
     }
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     This program can be started by the command
+
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     scala test.HelloWorld
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -6972,12 +6975,12 @@ which executes the initializaton code of the object $m$.
     would work as well. 
 
     `HelloWorld` can also be defined without a `main` method 
-    by inheriting from `Application` instead:
+    by inheriting from `App` instead:
 
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ {.scala}
     package test 
-    object HelloWord extends Application {
-      println("hello world")
+    object HelloWorld extends App {
+      println("Hello World")
     }
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -7667,7 +7670,7 @@ These are defined as follows.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ {.scala}
 package scala 
-case class Tuple$n$[+a_1, ..., +a_n](_1: a_1, ..., _$n$: a_$n$) {
+case class Tuple$n$[+A_1, ..., +A_n](_1: A_1, ..., _$n$: A_$n$) {
   def toString = "(" ++ _1 ++ "," ++ $\ldots$ ++ "," ++ _$n$ ++ ")"
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -7683,8 +7686,8 @@ These are defined as follows.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ {.scala}
 package scala 
-trait Function$n$[-a_1, ..., -a_$n$, +b] {
-  def apply(x_1: a_1, ..., x_$n$: a_$n$): b 
+trait Function$n$[-A_1, ..., -A_$n$, +B] {
+  def apply(x_1: A_1, ..., x_$n$: A_$n$): B 
   def toString = "<function>" 
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
